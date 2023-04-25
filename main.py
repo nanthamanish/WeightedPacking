@@ -1,22 +1,8 @@
-from package import Package
-from container import Container
 from helper import read_floats, read_ints, rand_range, to_str
 from functools import cmp_to_key
-
-
-def cmp_pack(pa: Package, pb: Package):
-    if pa.dest == pb.dest:
-        if pa.maxDim < pb.maxDim:
-            return 1
-        elif pa.maxDim > pb.maxDim: 
-            return -1
-        else:
-            return 0
-    
-    elif pa.dest < pb.dest:
-        return 1
-    else:
-        return -1
+from package import Package, cmp_pack
+from container import Container
+from packer import Packer
 
 
 def get_input_from_file(fname) -> tuple[Container, list[Package]]:
@@ -44,13 +30,22 @@ def main():
     fname = "input/{f}.txt".format(f=fname)
 
     c, packages = get_input_from_file(fname)
-    # c.printObj()
 
     packages.sort(key=cmp_to_key(cmp_pack))
 
-    # for pack in packages:
-    #     pack.print_obj()
+    print(len(packages))
+    tot_vol = 0
 
+    for pack in packages:
+        tot_vol += pack.vol
+        print(pack.dest)
+        pack.print_obj()
+
+    print(tot_vol/c.vol)
+
+    P = Packer(packages=packages, containers=[c])
+    P.pack()
+    
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,6 @@
 
 import math
 
-
 class Location:
     def __init__(self, x=-1, y=-1, z=-1):
         self.x = x
@@ -47,12 +46,14 @@ class Package:
         self.l1 = l1
         self.b1 = b1
         self.h1 = h1
+        
+        self.vert_load_lim = stackLoad[2]
 
         self.ID = ID
         self.wt = wt
         self.dest = dest
 
-        self.pVol = self.l * self.b * self.h
+        self.vol = self.l * self.b * self.h
         self.maxDim = max([self.l, self.b, self.h])
 
         self.pos: Location = pos
@@ -60,30 +61,27 @@ class Package:
 
     def print_obj(self):
         print(self.dest, self.ID, self.maxDim)
-        # print(self.l, self.b, self.h)
-        # print(self.orientation)
-        # print(self.wt, self.pVol, self.stackLoad)
-
-    def isBelow(self, item):
-        res = self.pos.z + self.h <= item.pos.z and \
-            (item.pos.x <= self.pos.x and self.pos.x <= item.pos.x + item.l or
-             item.pos.x <= self.pos.x + self.l and self.pos.x + self.l <= item.pos.x + item.l) and \
-            (item.pos.y <= self.pos.y and self.pos.y <= item.pos.y + item.b or
-             item.pos.y <= self.pos.y + self.b and self.pos.y + self.b <= item.pos.y + item.b)
-        return res
-
-    def isBehind(self, item):
-        res = self.pos.x + self.l < item.pos.x and \
-            self.pos.z < item.pos.z + item.h and \
-            (self.pos.y < item.pos.y and item.pos.y < self.pos.y + self.b or
-             item.pos.y < self.pos.y and self.pos.y < item.pos.y + item.b)
-        return res
-
-    def isBlockedBy(self, item):
-        res = self.isBelow(item) or self.isBehind(item)
-        return res
 
     def setDim1(self, l, b, h):
         self.l1 = l
         self.b1 = b
         self.h1 = h
+
+    def stress_load(self):
+        base_area = self.l1 * self.b1
+        return self.wt/base_area
+
+
+def cmp_pack(pa: Package, pb: Package):
+    if pa.dest == pb.dest:
+        if pa.maxDim < pb.maxDim:
+            return 1
+        elif pa.maxDim > pb.maxDim: 
+            return -1
+        else:
+            return 0
+    
+    elif pa.dest < pb.dest:
+        return 1
+    else:
+        return -1
