@@ -1,5 +1,6 @@
 import random
 from helper import read_floats, read_ints, to_str, shift_range
+import sys
 
 DENSITY_LOWER_BOUND = 1
 DENSITY_UPPER_BOUND = 1
@@ -11,7 +12,8 @@ SEED = 1
 
 def main():
     random.seed(SEED)
-    inp = input("Enter File Name (without extension): ")
+    #inp = input("Enter File Name (without extension): ")
+    inp = sys.argv[1]
     fname = "wtpack/{}.txt".format(inp)
     print(fname)
     f_in = open(fname, "r")
@@ -50,7 +52,7 @@ def main():
                 hbear_upd = round(density * hbear, PRECISION)
 
                 wt_upd = 0
-                
+
                 item = [id, dest, wt_upd, l, b, h, lo, bo,
                         ho, lbear_upd, bbear_upd, hbear_upd]
 
@@ -67,6 +69,8 @@ def main():
 
         f_out.close()
     f_in.close()
+
+    print("Inputs Generated")
 
 
 if __name__ == "__main__":

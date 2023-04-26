@@ -3,6 +3,7 @@ from functools import cmp_to_key
 from package import Package, cmp_pack
 from container import Container
 from packer import Packer
+import sys
 
 
 def get_input_from_file(fname) -> tuple[Container, list[Package]]:
@@ -26,7 +27,8 @@ def get_input_from_file(fname) -> tuple[Container, list[Package]]:
 
 
 def main():
-    fname = input("Enter File Name (without Extension): ")
+    #fname = input("Enter File Name (without Extension): ")
+    fname = sys.argv[1]
     fname = "input/{f}.txt".format(f=fname)
 
     c, packages = get_input_from_file(fname)
