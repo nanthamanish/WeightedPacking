@@ -1,4 +1,4 @@
-.# WeightedPacking
+# WeightedPacking
 
 To create input files from wtpack:
 + Create folder ```input/``` in working directory
