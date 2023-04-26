@@ -1,20 +1,22 @@
 import random
-from helper import read_floats, read_ints, rand_range, to_str
+from helper import read_floats, read_ints, to_str, shift_range
 
-DENSITY_LOWER_BOUND = 0.5
-DENSITY_UPPER_BOUND = 10
+DENSITY_LOWER_BOUND = 1
+DENSITY_UPPER_BOUND = 1
 DESTINATIONS = 100
+WTPACK_PROBLEM_CNT = 100
 PRECISION = 3
+SEED = 1
 
 
 def main():
-    random.seed()
+    random.seed(SEED)
     inp = input("Enter File Name (without extension): ")
     fname = "wtpack/{}.txt".format(inp)
     print(fname)
     f_in = open(fname, "r")
 
-    for p in range(100):
+    for p in range(WTPACK_PROBLEM_CNT):
         cont_dim = read_ints(f_in)
         n_packs, vol = read_floats(f_in)
         n_packs = int(n_packs)
@@ -33,26 +35,36 @@ def main():
 
             t_boxes += numBox
 
-            density = rand_range(DENSITY_LOWER_BOUND, DENSITY_UPPER_BOUND)
-
-            wt = round(wt * density, PRECISION)
-            lbear = round(wt * lbear, PRECISION)
-            bbear = round(wt * bbear, PRECISION)
-            hbear = round(wt * hbear, PRECISION)
             for j in range(numBox):
                 dest = random.randint(1, DESTINATIONS)
-                item = [id, dest, l, lo, b, bo, h, ho, wt, lbear, bbear, hbear]
+
+                x = random.random()
+                density = shift_range(
+                    x, DENSITY_LOWER_BOUND, DENSITY_UPPER_BOUND)
+
+                # print(x, density)
+
+                wt_upd = round(density * wt, PRECISION)
+                lbear_upd = round(density * lbear, PRECISION)
+                bbear_upd = round(density * bbear, PRECISION)
+                hbear_upd = round(density * hbear, PRECISION)
+
+                wt_upd = 0
+                
+                item = [id, dest, wt_upd, l, b, h, lo, bo,
+                        ho, lbear_upd, bbear_upd, hbear_upd]
+
                 items.append(item)
                 id += 1
 
-        first_line = cont_dim
-        first_line.append(t_boxes)
-        contStr = to_str(first_line)
-
+        cont_dim.append(t_boxes)
+        contStr = to_str(cont_dim)
         f_out.write(contStr)
+
         for item in items:
             out_str = to_str(item)
             f_out.write(out_str)
+
         f_out.close()
     f_in.close()
 

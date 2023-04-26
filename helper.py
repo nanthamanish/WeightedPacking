@@ -8,12 +8,9 @@ def read_ints(f) -> list[int]:
 def read_floats(f) -> list[float]:
     return [float(x) for x in f.readline().split()]
 
-
-def rand_range(lb, ub):
-    x = random.random()
+def shift_range(x, lb, ub):
     res = lb + (ub - lb) * x
-    return x
-
+    return res
 
 def to_str(l):
     return ' '.join(map(str, l)) + '\n'
