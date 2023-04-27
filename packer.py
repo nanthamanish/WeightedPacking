@@ -1,6 +1,7 @@
 from package import Package, make_package_copy, allowed_orientations
-from container import Container
+from container import Container, make_container_copy
 from functools import cmp_to_key
+import random
 
 TREE_WIDTH = 5
 
@@ -43,15 +44,16 @@ class Packer():
     def three_d_pack(self, C: Container, items: list[Package]):
         options: list[tuple[float, Container]] = []
         options.append((self.greedy_pack(C, items, len(items) - 1), C))
-        
-        for i in range(len(items) - 1, -1, -1): 
+
+        for i in range(len(items) - 1, -1, -1):
 
             I = items[i]
             Iarr = allowed_orientations(I)
+            # random.shuffle(Iarr)
 
             for k in range(len(options) - 1, -1, -1):
-                C = options[k][1]
-                options.append((self.greedy_pack(C, items, i - 1), C))
+                C_new = make_container_copy(options[k][1])
+                options.append((self.greedy_pack(C_new, items, i - 1), C_new))
 
                 for j in range(6):
                     if Iarr[j] is None:
@@ -59,39 +61,42 @@ class Packer():
 
                     Iarr[j].pos = options[k][1].fit(
                         Iarr[j].l1, Iarr[j].b1, Iarr[j].h1, Iarr[j].stress_load())
-                    
-                    if Iarr[j].pos.x != -1:
-                        C = options[k][1]
-                        C = self.pack_item(C, Iarr[j])
-                        print(C.positions)
-                        options.append((self.greedy_pack(C, items, i - 1), C))
-                #del options[k]
 
-            # s = " ".join(str(round(x[0], 3)) for x in options)
-            # print(s)
+                    if Iarr[j].pos.x != -1:
+                        C_new = make_container_copy(options[k][1])
+                        C_new = self.pack_item(C_new, Iarr[j])
+                        options.append(
+                            (self.greedy_pack(C_new, items, i - 1), C_new))
+
+                del options[k]
 
             options.sort(key=cmp_to_key(greater_pair))
+
             if len(options) > TREE_WIDTH:
                 options = options[:TREE_WIDTH]
 
-        # self.print_res(C)
-        return C
+            s = " ".join(str(round(x[0], 3)) for x in options)
+            print("s - ", s)
+
+        return options[0][1]
 
     def greedy_pack(self, C: Container, items: list[Package], starting):
+        C1 = make_container_copy(C)
         for i in range(starting, -1, -1):
             I = items[i]
             Iarr = allowed_orientations(I)
+
             for j in range(6):
                 if Iarr[j] is None:
                     continue
 
-                Iarr[j].pos = C.fit(Iarr[j].l1, Iarr[j].b1,
-                                    Iarr[j].h1, Iarr[j].stress_load())
+                Iarr[j].pos = C1.fit(Iarr[j].l1, Iarr[j].b1,
+                                     Iarr[j].h1, Iarr[j].stress_load())
                 if Iarr[j].pos.x != -1:
-                    C = self.pack_item(C, Iarr[j])
+                    C1 = self.pack_item(C1, Iarr[j])
                     break
 
-        return C.vol_opt()
+        return C1.vol_opt()
 
     def pack_item(self, C: Container, I: Package) -> Container:
         if I.pos.x == -1:

@@ -55,7 +55,7 @@ def main():
                 bbear_upd = round(density * bbear, PRECISION)
                 hbear_upd = round(density * hbear, PRECISION)
 
-                #wt_upd = 0
+                # wt_upd = 0
 
                 item = [id, dest, wt_upd, l, b, h, lo, bo,
                         ho, lbear_upd, bbear_upd, hbear_upd]

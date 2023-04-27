@@ -1,5 +1,5 @@
 from package import Package, Location
-
+import copy
 
 class Container:
     def __init__(self,
@@ -7,7 +7,7 @@ class Container:
                  y=0,
                  z=0,
                  ID=0,
-                 maxWt=0,
+                 max_wt=0,
                  consignment_ids: list[int] = [],
                  packed_items: list[Package] = []) -> None:
         self.L = x
@@ -22,7 +22,7 @@ class Container:
         self.positions = {(0, 0)}
         self.packed_items = packed_items
 
-        self.max_wt = maxWt
+        self.max_wt = max_wt
         self.vol = self.L * self.B * self.H
 
     def print_obj(self):
@@ -85,3 +85,17 @@ class Container:
 
     def itemCount(self):
         return len(self.packed_items)
+
+def make_container_copy(C: Container):
+    C1 = Container(x=C.L,
+                 y=C.B,
+                 z=C.H,
+                 ID=C.ID,
+                 max_wt=C.max_wt,
+                 packed_items = C.packed_items.copy())
+    C1.h_grid = copy.deepcopy(C.h_grid)
+    C1.load_grid = copy.deepcopy(C.load_grid)
+    C1.load_lim = copy.deepcopy(C.load_lim)
+    C1.positions = copy.deepcopy(C.positions)
+
+    return C1

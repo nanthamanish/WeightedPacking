@@ -27,7 +27,7 @@ def get_input_from_file(fname) -> tuple[Container, list[Package]]:
 
 
 def main():
-    #fname = input("Enter File Name (without Extension): ")
+
     fname = sys.argv[1]
     fname = "input/{f}.txt".format(f=fname)
 
@@ -42,7 +42,7 @@ def main():
         # print(pack.dest, max([pack.orientation[i] * pack.stack_load[i] for i in range(3)]))
         # pack.print_obj()
 
-    print(tot_vol/c.vol)
+    print("Maximum Utilization: {mu}".format(mu=tot_vol/c.vol))
 
     P = Packer(packages=packages, containers=[c])
     res = P.pack()
@@ -51,9 +51,8 @@ def main():
     outfname = sys.argv[2]
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")
-    outf.write("{r}\n".format(r = res))
+    outf.write("{r}\n".format(r=res))
     outf.close()
-    
 
 
 if __name__ == "__main__":
