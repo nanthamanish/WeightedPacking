@@ -1,8 +1,11 @@
-# WeightedPacking
+# Weighted Packing
 
-To create input files from wtpack:
-+ Create folder ```input/``` in working directory
-+ Run ```python make_inputs.py <wtpackx>```
+To create input files from `wtpack/`:
++ Run `python make_inputs.py <wtpackX>`
 
 To run packer on input file:
-```python main.py <input_file>```
++ Run `python main.py <wtpackX_Y>`
+
+To test all input files from a `wtpack`:
++ Run `python test_all.py <wpackX> <output_file>`
+

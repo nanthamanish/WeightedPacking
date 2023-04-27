@@ -1,10 +1,11 @@
 import random
-from helper import read_floats, read_ints, to_str, shift_range
+from helper import read_floats, read_ints, to_str, shift_range, make_dir
 import sys
+import os
 
 DENSITY_LOWER_BOUND = 1
 DENSITY_UPPER_BOUND = 1
-DESTINATIONS = 100
+DESTINATIONS = 10
 WTPACK_PROBLEM_CNT = 100
 PRECISION = 3
 SEED = 1
@@ -13,6 +14,9 @@ SEED = 1
 def main():
     random.seed(SEED)
     #inp = input("Enter File Name (without extension): ")
+
+    make_dir(os.getcwd(), "input")
+
     inp = sys.argv[1]
     fname = "wtpack/{}.txt".format(inp)
     print(fname)
@@ -51,7 +55,7 @@ def main():
                 bbear_upd = round(density * bbear, PRECISION)
                 hbear_upd = round(density * hbear, PRECISION)
 
-                wt_upd = 0
+                #wt_upd = 0
 
                 item = [id, dest, wt_upd, l, b, h, lo, bo,
                         ho, lbear_upd, bbear_upd, hbear_upd]

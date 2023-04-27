@@ -67,14 +67,14 @@ class Packer():
                         options.append((self.greedy_pack(C, items, i - 1), C))
                 #del options[k]
 
-            s = " ".join(str(round(x[0], 3)) for x in options)
-            print(s)
+            # s = " ".join(str(round(x[0], 3)) for x in options)
+            # print(s)
 
             options.sort(key=cmp_to_key(greater_pair))
             if len(options) > TREE_WIDTH:
                 options = options[:TREE_WIDTH]
 
-        self.print_res(C)
+        # self.print_res(C)
         return C
 
     def greedy_pack(self, C: Container, items: list[Package], starting):

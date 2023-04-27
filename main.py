@@ -48,6 +48,13 @@ def main():
     res = P.pack()
     print(res)
 
+    outfname = sys.argv[2]
+    outf = "output/{f}.txt".format(f=outfname)
+    outf = open(outf, "a")
+    outf.write("{r}\n".format(r = res))
+    outf.close()
+    
+
 
 if __name__ == "__main__":
     main()
