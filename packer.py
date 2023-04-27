@@ -2,6 +2,7 @@ from package import Package, make_package_copy, allowed_orientations
 from container import Container, make_container_copy
 from functools import cmp_to_key
 import random
+import cupy as cp
 
 TREE_WIDTH = 5
 
@@ -103,16 +104,32 @@ class Packer():
             return
 
         load = I.stress_load()
-        for m in range(I.pos.x, I.pos.x + I.l1, 1):
-            for n in range(I.pos.y, I.pos.y + I.b1, 1):
-                C.h_grid[m][n] += I.h1
-                C.load_grid[m][n] += load
 
-                if C.load_lim[m][n] == -1:
-                    C.load_lim[m][n] = I.vert_load_lim
-                else:
-                    C.load_lim[m][n] = min(
-                        C.load_lim[m][n] - load, I.vert_load_lim)
+        x_l = I.pos.x
+        x_u = I.pos.x + I.l1
+        y_l = I.pos.y
+        y_u = I.pos.y + I.b1
+        print(x_l, x_u, y_l, y_u)
+        C.h_grid[x_u:x_l, y_u:y_l] += I.h1
+        print(cp.where(C.h_grid != 0))
+        C.load_grid[x_u:x_l, y_u:y_l] += load
+        print(cp.where(C.load_grid != 0))
+
+        def fun(t): return min(t - load, I.vert_load_lim)
+        vfun = cp.vectorize(fun)
+        C.load_lim[x_u:x_l, y_u:y_l] = vfun(C.load_lim[x_u:x_l, y_u:y_l])
+        #print(cp.where(C.load_lim != 1000000000))
+        # for m in range(I.pos.x, I.pos.x + I.l1, 1):
+        #     for n in range(I.pos.y, I.pos.y + I.b1, 1):
+        #         C.h_grid[m][n] += I.h1
+        #         C.load_grid[m][n] += load
+        #         C.load_lim[m][n] = min(
+        #             C.load_lim[m][n] - load, I.vert_load_lim)
+        # if C.load_lim[m][n] == -1:
+        #     C.load_lim[m][n] = I.vert_load_lim
+        # else:
+        #     C.load_lim[m][n] = min(
+        #         C.load_lim[m][n] - load, I.vert_load_lim)
 
         if I.pos.x + I.l1 < C.L:
             C.positions.add((I.pos.x + I.l1, I.pos.y))

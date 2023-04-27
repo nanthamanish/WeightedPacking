@@ -4,6 +4,7 @@ from package import Package, cmp_pack
 from container import Container
 from packer import Packer
 import sys
+import time
 
 
 def get_input_from_file(fname) -> tuple[Container, list[Package]]:
@@ -28,7 +29,8 @@ def get_input_from_file(fname) -> tuple[Container, list[Package]]:
 
 def main():
 
-    fname = sys.argv[1]
+    #fname = sys.argv[1]
+    fname = "wtpack1_0"
     fname = "input/{f}.txt".format(f=fname)
 
     c, packages = get_input_from_file(fname)
@@ -44,15 +46,22 @@ def main():
 
     print("Maximum Utilization: {mu}".format(mu=tot_vol/c.vol))
 
+    
+    start = time.time()
     P = Packer(packages=packages, containers=[c])
     res = P.pack()
     print(res)
+    end = time.time()
 
-    outfname = sys.argv[2]
+
+    #outfname = sys.argv[2]
+    outfname = "wtpack_trail"
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")
     outf.write("{r}\n".format(r=res))
     outf.close()
+
+    print(end-start)
 
 
 if __name__ == "__main__":
