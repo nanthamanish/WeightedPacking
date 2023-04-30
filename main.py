@@ -29,8 +29,10 @@ def get_input_from_file(fname) -> tuple[Container, list[Package]]:
 
 def main():
 
-    #fname = sys.argv[1]
-    fname = "wtpack1_0"
+    print("GPU Testing")
+
+    fname = sys.argv[1]
+    # fname = "wtpack1_0"
     fname = "input/{f}.txt".format(f=fname)
 
     c, packages = get_input_from_file(fname)
@@ -54,8 +56,8 @@ def main():
     end = time.time()
 
 
-    #outfname = sys.argv[2]
-    outfname = "wtpack_trail"
+    outfname = sys.argv[2]
+    #outfname = "wtpack_trail"
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")
     outf.write("{r}\n".format(r=res))

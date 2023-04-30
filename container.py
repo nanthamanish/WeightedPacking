@@ -22,19 +22,11 @@ class Container:
 
         self.consignment_ids = consignment_ids
 
-        # self.h_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
-        # self.load_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
-        # self.load_lim = [[-1 for _ in range(self.B)] for _ in range(self.L)]
-
         l = [[0 for _ in range(self.B)] for _ in range(self.L)]
         load_lim = [[MAXV for _ in range(self.B)] for _ in range(self.L)]
         self.h_grid = cp.array(l, dtype='int32')
         self.load_grid = cp.array(l, dtype='double')
         self.load_lim = cp.array(load_lim, dtype='double')
-
-        # print(self.h_grid)
-        # print(self.load_grid)
-        # print(self.load_lim)
         
         self.positions = {(0, 0)}
         self.packed_items = packed_items
@@ -68,17 +60,6 @@ class Container:
                 if load_allowed is True:
                     pos_valid = True
 
-            # for m in range(l):
-            #     for n in range(b):
-            #         if self.h_grid[x + m][y + n] != base:
-            #             pos_valid = False
-            #             break
-            #         elif self.load_lim[x + m][y + n] != -1 and self.load_lim[x + m][y + n] < stress_load:
-            #             pos_valid = False
-            #             break
-            #     if pos_valid == False:
-            #         break
-
             if pos_valid:
                 loc = Location(x, y, base)
                 break
@@ -98,7 +79,7 @@ class Container:
         return pVol/self.vol
 
     def output_rep(self):
-        op = "Volume Optimization {vol_opt} Item Count {ic}".format(
+        op = "Volume Optimization {vol_opt}, Item Count {ic}".format(
             vol_opt=self.vol_opt(), ic=self.itemCount())
         print(op)
         return self.vol_opt()
