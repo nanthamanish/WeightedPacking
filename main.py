@@ -4,7 +4,7 @@ from package import Package, cmp_pack
 from container import Container
 from packer import Packer
 import sys
-
+import time
 
 def get_input_from_file(fname) -> tuple[Container, list[Package]]:
     f_in = open(fname, "r")
@@ -44,16 +44,22 @@ def main():
 
     print("Maximum Utilization: {mu}".format(mu=tot_vol/c.vol))
 
+    start = time.time()
     P = Packer(packages=packages, containers=[c])
     res = P.pack()
     print(res)
+    end = time.time()
 
     outfname = sys.argv[2]
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")
     outf.write("{r}\n".format(r=res))
     outf.close()
-
+    
+    timef = open("output/time_{f}.txt".format(f=outfname), "a")
+    timef.write("{r}\n".format(r=end-start))
+    
+    print(end-start)
 
 if __name__ == "__main__":
     main()
