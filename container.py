@@ -18,7 +18,7 @@ class Container:
         self.consignment_ids = consignment_ids
         self.h_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
         self.load_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
-        self.load_lim = [[-1 for _ in range(self.B)] for _ in range(self.L)]
+        self.load_lim = [[1e9 for _ in range(self.B)] for _ in range(self.L)]
         self.positions = {(0, 0)}
         self.packed_items = packed_items
 
@@ -47,7 +47,7 @@ class Container:
                     if self.h_grid[x + m][y + n] != base:
                         pos_valid = False
                         break
-                    elif self.load_lim[x + m][y + n] != -1 and self.load_lim[x + m][y + n] < stress_load:
+                    elif self.load_lim[x + m][y + n] < stress_load:
                         pos_valid = False
                         break
                 if pos_valid == False:
@@ -92,7 +92,7 @@ def make_container_copy(C: Container):
                  z=C.H,
                  ID=C.ID,
                  max_wt=C.max_wt,
-                 packed_items = C.packed_items.copy())
+                 packed_items = copy.deepcopy(C.packed_items))
     C1.h_grid = copy.deepcopy(C.h_grid)
     C1.load_grid = copy.deepcopy(C.load_grid)
     C1.load_lim = copy.deepcopy(C.load_lim)

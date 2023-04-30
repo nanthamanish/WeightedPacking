@@ -107,12 +107,8 @@ class Packer():
             for n in range(I.pos.y, I.pos.y + I.b1, 1):
                 C.h_grid[m][n] += I.h1
                 C.load_grid[m][n] += load
-
-                if C.load_lim[m][n] == -1:
-                    C.load_lim[m][n] = I.vert_load_lim
-                else:
-                    C.load_lim[m][n] = min(
-                        C.load_lim[m][n] - load, I.vert_load_lim)
+                C.load_lim[m][n] = min(
+                    C.load_lim[m][n] - load, I.vert_load_lim)
 
         if I.pos.x + I.l1 < C.L:
             C.positions.add((I.pos.x + I.l1, I.pos.y))
