@@ -46,14 +46,14 @@ def main():
 
     start = time.time()
     P = Packer(packages=packages, containers=[c])
-    C = P.three_d_pack(C=c, items=packages)
-    C.output_rep()
+    packed_c = P.three_d_pack(C=c, items=packages)
+    packed_c.output_rep()
     end = time.time()
 
     outfname = sys.argv[2]
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")
-    outf.write("{r} {ic}\n".format(r=c.vol_opt(), ic=C.item_count()))
+    outf.write("{r} {ic}\n".format(r=packed_c.vol_opt(), ic=packed_c.item_count()))
     outf.close()
 
     timef = open("output/time_{f}.txt".format(f=outfname), "a")
