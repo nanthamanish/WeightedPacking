@@ -2,7 +2,7 @@ from package import Package, make_package_copy, allowed_orientations
 from container import Container, make_container_copy
 from functools import cmp_to_key
 import random
-import cupy as cp
+import numpy as np
 
 TREE_WIDTH = 5
 
@@ -116,7 +116,7 @@ class Packer():
 
 
         def fun(t): return min(t - load, I.vert_load_lim)
-        vfun = cp.vectorize(fun)
+        vfun = np.vectorize(fun)
         C.load_lim[x_l:x_u, y_l:y_u] = vfun(C.load_lim[x_l:x_u, y_l:y_u])
 
 

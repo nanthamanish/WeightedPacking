@@ -1,7 +1,6 @@
 from package import Package, Location
 import copy
 import numpy as np
-import cupy as cp
 
 MAXV = 1e9
 
@@ -25,9 +24,9 @@ class Container:
         l1 = [[0 for _ in range(self.B)] for _ in range(self.L)]
         l2 = [[0 for _ in range(self.B)] for _ in range(self.L)]
         load_lim = [[MAXV for _ in range(self.B)] for _ in range(self.L)]
-        self.h_grid = cp.array(l1, dtype='int32')
-        self.load_grid = cp.array(l2, dtype='double')
-        self.load_lim = cp.array(load_lim, dtype='double')
+        self.h_grid = np.array(l1, dtype='int32')
+        self.load_grid = np.array(l2, dtype='double')
+        self.load_lim = np.array(load_lim, dtype='double')
         
         self.positions = {(0, 0)}
         self.packed_items = packed_items
@@ -53,12 +52,12 @@ class Container:
                 continue
 
             h_in_range = self.h_grid[x:x+l, y:y+b]
-            base_equal = cp.all(h_in_range == base).item()
+            base_equal = np.all(h_in_range == base).item()
             if base_equal is False:
                 continue
 
             load_in_range = self.load_lim[x:x+l, y:y+b]
-            load_allowed = cp.all(stress_load <= load_in_range).item()
+            load_allowed = np.all(stress_load <= load_in_range).item()
             if load_allowed is False:
                 continue
 
@@ -90,9 +89,9 @@ class Container:
 
         l = [[0 for _ in range(self.B)] for _ in range(self.L)]
         load_lim = [[MAXV for _ in range(self.B)] for _ in range(self.L)]
-        self.h_grid = cp.array(l, dtype='int32')
-        self.load_grid = cp.array(l, dtype='double')
-        self.load_lim = cp.array(load_lim, dtype='double')
+        self.h_grid = np.array(l, dtype='int32')
+        self.load_grid = np.array(l, dtype='double')
+        self.load_lim = np.array(load_lim, dtype='double')
 
         self.packed_items.clear()
 
@@ -108,9 +107,9 @@ def make_container_copy(C: Container):
                    max_wt=C.max_wt,
                    packed_items=copy.deepcopy(C.packed_items))
 
-    C1.h_grid = cp.copy(C.h_grid)
-    C1.load_grid = cp.copy(C.load_grid)
-    C1.load_lim = cp.copy(C.load_lim)
+    C1.h_grid = np.copy(C.h_grid)
+    C1.load_grid = np.copy(C.load_grid)
+    C1.load_lim = np.copy(C.load_lim)
     C1.positions = copy.deepcopy(C.positions)
     
     return C1
