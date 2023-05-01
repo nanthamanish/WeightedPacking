@@ -3,7 +3,7 @@ import copy
 import numpy as np
 import cupy as cp
 
-MAXV = 1000000000
+MAXV = 1e9
 
 
 class Container:
@@ -22,10 +22,11 @@ class Container:
 
         self.consignment_ids = consignment_ids
 
-        l = [[0 for _ in range(self.B)] for _ in range(self.L)]
+        l1 = [[0 for _ in range(self.B)] for _ in range(self.L)]
+        l2 = [[0 for _ in range(self.B)] for _ in range(self.L)]
         load_lim = [[MAXV for _ in range(self.B)] for _ in range(self.L)]
-        self.h_grid = cp.array(l, dtype='int32')
-        self.load_grid = cp.array(l, dtype='double')
+        self.h_grid = cp.array(l1, dtype='int32')
+        self.load_grid = cp.array(l2, dtype='double')
         self.load_lim = cp.array(load_lim, dtype='double')
         
         self.positions = {(0, 0)}
@@ -40,35 +41,34 @@ class Container:
     def fit(self, l, b, h, stress_load):
         # finds a fit and returns
         loc = Location()
-        pos_valid = False
+        pos_valid = True
 
         for p in self.positions:
 
             x = p[0]
             y = p[1]
             base = self.h_grid[x][y].item()
-            # print(base)
 
             if x + l > self.L or y + b > self.B or base + h > self.H:
                 continue
 
             h_in_range = self.h_grid[x:x+l, y:y+b]
             base_equal = cp.all(h_in_range == base).item()
-            if base_equal is True:
-                load_in_range = self.load_lim[x:x+l, y:y+b]
-                load_allowed = cp.all(stress_load <= load_in_range).item()
-                if load_allowed is True:
-                    pos_valid = True
+            if base_equal is False:
+                continue
+
+            load_in_range = self.load_lim[x:x+l, y:y+b]
+            load_allowed = cp.all(stress_load <= load_in_range).item()
+            if load_allowed is False:
+                continue
 
             if pos_valid:
                 loc = Location(x, y, base)
                 break
 
-        # loc.print_loc()
-
         if loc.x < 0:
             return Location()
-
+    
         return loc
 
     def vol_opt(self):
@@ -80,7 +80,7 @@ class Container:
 
     def output_rep(self):
         op = "Volume Optimization {vol_opt}, Item Count {ic}".format(
-            vol_opt=self.vol_opt(), ic=self.itemCount())
+            vol_opt=self.vol_opt(), ic=self.item_count())
         print(op)
         return self.vol_opt()
 
@@ -96,7 +96,7 @@ class Container:
 
         self.packed_items.clear()
 
-    def itemCount(self):
+    def item_count(self):
         return len(self.packed_items)
 
 
@@ -106,15 +106,11 @@ def make_container_copy(C: Container):
                    z=C.H,
                    ID=C.ID,
                    max_wt=C.max_wt,
-                   packed_items=C.packed_items.copy())
-    # C1.h_grid = copy.deepcopy(C.h_grid)
-    # C1.load_grid = copy.deepcopy(C.load_grid)
-    # C1.load_lim = copy.deepcopy(C.load_lim)
-    # C1.positions = copy.deepcopy(C.positions)
+                   packed_items=copy.deepcopy(C.packed_items))
 
     C1.h_grid = cp.copy(C.h_grid)
     C1.load_grid = cp.copy(C.load_grid)
     C1.load_lim = cp.copy(C.load_lim)
     C1.positions = copy.deepcopy(C.positions)
-
+    
     return C1

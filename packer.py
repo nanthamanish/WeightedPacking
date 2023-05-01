@@ -13,9 +13,9 @@ def greater_pair(a: tuple[float, Container], b: tuple[float, Container]):
     elif a[0] < b[0]:
         return 1
     else:
-        if a[1].itemCount() < b[1].itemCount():
+        if a[1].item_count() < b[1].item_count():
             return -1
-        elif a[1].itemCount() > b[1].itemCount():
+        elif a[1].item_count() > b[1].item_count():
             return 1
     return 0
 
@@ -42,10 +42,10 @@ class Packer():
             print(s.format(pack.pos.x, pack.pos.y, pack.pos.z))
             print()
 
-    def three_d_pack(self, C: Container, items: list[Package]):
+    def three_d_pack(self, C: Container, items: list[Package]) -> Container:
         options: list[tuple[float, Container]] = []
         options.append((self.greedy_pack(C, items, len(items) - 1), C))
-
+        
         for i in range(len(items) - 1, -1, -1):
 
             I = items[i]
@@ -76,8 +76,8 @@ class Packer():
             if len(options) > TREE_WIDTH:
                 options = options[:TREE_WIDTH]
 
-            s = " ".join(str(round(x[0], 3)) for x in options)
-            print("s - ", s)
+            # s = " ".join(str(round(x[0], 3)) for x in options)
+            # print("{it} - {s}".format(it = len(items) - i, s=s))
 
         return options[0][1]
 
@@ -109,21 +109,16 @@ class Packer():
         x_u = I.pos.x + I.l1
         y_l = I.pos.y
         y_u = I.pos.y + I.b1
-        # print(x_l, x_u, y_l, y_u)
 
         C.h_grid[x_l:x_u, y_l:y_u] += I.h1
-        # new_grid = C.h_grid[x_l:x_u, y_l:y_u]
-        # print(new_grid)
 
         C.load_grid[x_l:x_u, y_l:y_u] += load
-        # new_grid = C.load_grid[x_l:x_u, y_l:y_u]
-        # print(new_grid)
+
 
         def fun(t): return min(t - load, I.vert_load_lim)
         vfun = cp.vectorize(fun)
         C.load_lim[x_l:x_u, y_l:y_u] = vfun(C.load_lim[x_l:x_u, y_l:y_u])
-        # new_grid = C.load_lim[x_l:x_u, y_l:y_u]
-        # print(new_grid)
+
 
 
         if I.pos.x + I.l1 < C.L:
@@ -137,5 +132,5 @@ class Packer():
 
         I.packed = True
         C.packed_items.append(I)
-
+        
         return C

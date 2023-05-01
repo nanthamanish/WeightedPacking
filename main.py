@@ -29,39 +29,35 @@ def get_input_from_file(fname) -> tuple[Container, list[Package]]:
 
 def main():
 
-    print("GPU Testing")
+    print("GPU Mode")
 
     fname = sys.argv[1]
-    # fname = "wtpack1_0"
-    fname = "input/{f}.txt".format(f=fname)
+    inf = "input/{f}.txt".format(f=fname)
 
-    c, packages = get_input_from_file(fname)
+    c, packages = get_input_from_file(inf)
 
     packages.sort(key=cmp_to_key(cmp_pack))
 
     tot_vol = 0
-
     for pack in packages:
         tot_vol += pack.vol
-        # print(pack.dest, max([pack.orientation[i] * pack.stack_load[i] for i in range(3)]))
-        # pack.print_obj()
 
     print("Maximum Utilization: {mu}".format(mu=tot_vol/c.vol))
 
-    
     start = time.time()
     P = Packer(packages=packages, containers=[c])
-    res = P.pack()
-    print(res)
+    C = P.three_d_pack(C=c, items=packages)
+    C.output_rep()
     end = time.time()
 
-
     outfname = sys.argv[2]
-    #outfname = "wtpack_trail"
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")
-    outf.write("{r}\n".format(r=res))
+    outf.write("{r} {ic}\n".format(r=c.vol_opt(), ic=C.item_count()))
     outf.close()
+
+    timef = open("output/time_{f}.txt".format(f=outfname), "a")
+    timef.write("{r}\n".format(r=end-start))
 
     print(end-start)
 
