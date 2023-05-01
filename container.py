@@ -17,7 +17,7 @@ class Container:
 
         self.consignment_ids = consignment_ids
         self.h_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
-        self.load_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
+        self.load_grid = [[0.0 for _ in range(self.B)] for _ in range(self.L)]
         self.load_lim = [[1e9 for _ in range(self.B)] for _ in range(self.L)]
         self.positions = {(0, 0)}
         self.packed_items = packed_items
@@ -31,10 +31,9 @@ class Container:
     def fit(self, l, b, h, stress_load):
         # finds a fit and returns
         loc = Location()
-        pos_valid = True
 
-        for p in self.positions:
-            
+        for p in self.positions:       
+            pos_valid = True
             x = p[0]
             y = p[1]
             base = self.h_grid[x][y]
@@ -60,6 +59,8 @@ class Container:
         if loc.x < 0:
             return Location()
 
+        # print(self.positions)
+        # loc.print_loc()
         return loc
 
     def vol_opt(self):

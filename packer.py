@@ -44,7 +44,7 @@ class Packer():
     def three_d_pack(self, C: Container, items: list[Package]):
         options: list[tuple[float, Container]] = []
         options.append((self.greedy_pack(C, items, len(items) - 1), C))
-
+        
         for i in range(len(items) - 1, -1, -1):
 
             I = items[i]
@@ -75,8 +75,8 @@ class Packer():
             if len(options) > TREE_WIDTH:
                 options = options[:TREE_WIDTH]
 
-            s = " ".join(str(round(x[0], 3)) for x in options)
-            print("s - ", s)
+            # s = " ".join(str(round(x[0], 3)) for x in options)
+            # print("{it} - {s}".format(it = len(items) - i, s=s))
 
         return options[0][1]
 
@@ -121,5 +121,5 @@ class Packer():
 
         I.packed = True
         C.packed_items.append(I)
-
+        
         return C
