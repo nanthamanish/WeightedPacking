@@ -6,6 +6,7 @@ from packer import Packer
 import sys
 import time
 
+PACK_SIZE_LIM = 300
 
 def get_input_from_file(fname) -> tuple[Container, list[Package]]:
     f_in = open(fname, "r")
@@ -41,6 +42,18 @@ def main():
     tot_vol = 0
     for pack in packages:
         tot_vol += pack.vol
+
+    if len(packages) > PACK_SIZE_LIM:
+        print("Skipping, Package count high")
+        outfname = sys.argv[2]
+        outf = "output/{f}.txt".format(f=outfname)
+        outf = open(outf, "a")
+        outf.write("{r} {ic}\n".format(r=0, ic=0))
+        outf.close()
+
+        timef = open("output/time_{f}.txt".format(f=outfname), "a")
+        timef.write("{r}\n".format(r=0))
+        return
 
     print("Maximum Utilization: {mu}".format(mu=tot_vol/c.vol))
 

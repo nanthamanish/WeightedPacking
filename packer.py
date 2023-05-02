@@ -45,9 +45,8 @@ class Packer():
     def three_d_pack(self, C: Container, items: list[Package]) -> Container:
         options: list[tuple[float, Container]] = []
         options.append((self.greedy_pack(C, items, len(items) - 1), C))
-        
+                
         for i in range(len(items) - 1, -1, -1):
-
             I = items[i]
             Iarr = allowed_orientations(I)
             # random.shuffle(Iarr)
@@ -59,12 +58,12 @@ class Packer():
                 for j in range(6):
                     if Iarr[j] is None:
                         continue
-
-                    Iarr[j].pos = options[k][1].fit(
+                    
+                    C_new = make_container_copy(options[k][1])
+                    Iarr[j].pos = C_new.fit(
                         Iarr[j].l1, Iarr[j].b1, Iarr[j].h1, Iarr[j].stress_load())
-
+                    
                     if Iarr[j].pos.x != -1:
-                        C_new = make_container_copy(options[k][1])
                         C_new = self.pack_item(C_new, Iarr[j])
                         options.append(
                             (self.greedy_pack(C_new, items, i - 1), C_new))
@@ -76,8 +75,8 @@ class Packer():
             if len(options) > TREE_WIDTH:
                 options = options[:TREE_WIDTH]
 
-            # s = " ".join(str(round(x[0], 3)) for x in options)
-            # print("{it} - {s}".format(it = len(items) - i, s=s))
+            s = " ".join(format(round(x[0], 3), '.3f') for x in options)
+            print("{it} - {s}".format(it = len(items) - i, s=s))
 
         return options[0][1]
 
@@ -118,8 +117,6 @@ class Packer():
         def fun(t): return min(t - load, I.vert_load_lim)
         vfun = np.vectorize(fun)
         C.load_lim[x_l:x_u, y_l:y_u] = vfun(C.load_lim[x_l:x_u, y_l:y_u])
-
-
 
         if I.pos.x + I.l1 < C.L:
             C.positions.add((I.pos.x + I.l1, I.pos.y))
