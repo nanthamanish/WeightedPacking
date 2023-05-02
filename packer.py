@@ -59,12 +59,12 @@ class Packer():
                 for j in range(6):
                     if Iarr[j] is None:
                         continue
-
-                    Iarr[j].pos = options[k][1].fit(
+                    
+                    C_new = make_container_copy(options[k][1])
+                    Iarr[j].pos = C_new.fit(
                         Iarr[j].l1, Iarr[j].b1, Iarr[j].h1, Iarr[j].stress_load())
 
                     if Iarr[j].pos.x != -1:
-                        C_new = make_container_copy(options[k][1])
                         C_new = self.pack_item(C_new, Iarr[j])
                         options.append(
                             (self.greedy_pack(C_new, items, i - 1), C_new))
@@ -76,8 +76,8 @@ class Packer():
             if len(options) > TREE_WIDTH:
                 options = options[:TREE_WIDTH]
 
-            # s = " ".join(str(round(x[0], 3)) for x in options)
-            # print("{it} - {s}".format(it = len(items) - i, s=s))
+            s = " ".join(format(round(x[0], 3), '.3f') for x in options)
+            print("{it} - {s}".format(it = len(items) - i, s=s))
 
         return options[0][1]
 
