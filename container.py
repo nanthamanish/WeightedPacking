@@ -1,5 +1,9 @@
 from package import Package, Location
 import copy
+import numpy as np
+
+MAXV = 1e9
+
 
 class Container:
     def __init__(self,
@@ -16,9 +20,14 @@ class Container:
         self.ID = ID
 
         self.consignment_ids = consignment_ids
-        self.h_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
-        self.load_grid = [[0.0 for _ in range(self.B)] for _ in range(self.L)]
-        self.load_lim = [[1e9 for _ in range(self.B)] for _ in range(self.L)]
+
+        l1 = [[0 for _ in range(self.B)] for _ in range(self.L)]
+        l2 = [[0 for _ in range(self.B)] for _ in range(self.L)]
+        load_lim = [[MAXV for _ in range(self.B)] for _ in range(self.L)]
+        self.h_grid = np.array(l1, dtype='int32')
+        self.load_grid = np.array(l2, dtype='double')
+        self.load_lim = np.array(load_lim, dtype='double')
+        
         self.positions = {(0, 0)}
         self.packed_items = packed_items
 
@@ -36,21 +45,20 @@ class Container:
             pos_valid = True
             x = p[0]
             y = p[1]
-            base = self.h_grid[x][y]
+            base = self.h_grid[x][y].item()
 
             if x + l > self.L or y + b > self.B or base + h > self.H:
                 continue
 
-            for m in range(l):
-                for n in range(b):
-                    if self.h_grid[x + m][y + n] != base:
-                        pos_valid = False
-                        break
-                    elif self.load_lim[x + m][y + n] < stress_load:
-                        pos_valid = False
-                        break
-                if pos_valid == False:
-                    break
+            h_in_range = self.h_grid[x:x+l, y:y+b]
+            base_equal = np.all(h_in_range == base).item()
+            if base_equal is False:
+                continue
+
+            load_in_range = self.load_lim[x:x+l, y:y+b]
+            load_allowed = np.all(stress_load <= load_in_range).item()
+            if load_allowed is False:
+                continue
 
             if pos_valid:
                 loc = Location(x, y, base)
@@ -58,9 +66,7 @@ class Container:
 
         if loc.x < 0:
             return Location()
-
-        # print(self.positions)
-        # loc.print_loc()
+    
         return loc
 
     def vol_opt(self):
@@ -71,8 +77,8 @@ class Container:
         return pVol/self.vol
 
     def output_rep(self):
-        op = "Volume Optimization {vol_opt} Item Count {ic}".format(
-            vol_opt=self.vol_opt(), ic=self.itemCount())
+        op = "Volume Optimization {vol_opt}, Item Count {ic}".format(
+            vol_opt=self.vol_opt(), ic=self.item_count())
         print(op)
         return self.vol_opt()
 
@@ -80,23 +86,29 @@ class Container:
         self.positions.clear()
         self.positions = {(0, 0)}
 
-        self.h_grid = [[0 for _ in range(self.B)] for _ in range(self.L)]
+        l = [[0 for _ in range(self.B)] for _ in range(self.L)]
+        load_lim = [[MAXV for _ in range(self.B)] for _ in range(self.L)]
+        self.h_grid = np.array(l, dtype='int32')
+        self.load_grid = np.array(l, dtype='double')
+        self.load_lim = np.array(load_lim, dtype='double')
 
         self.packed_items.clear()
 
-    def itemCount(self):
+    def item_count(self):
         return len(self.packed_items)
+
 
 def make_container_copy(C: Container):
     C1 = Container(x=C.L,
-                 y=C.B,
-                 z=C.H,
-                 ID=C.ID,
-                 max_wt=C.max_wt,
-                 packed_items = copy.deepcopy(C.packed_items))
-    C1.h_grid = copy.deepcopy(C.h_grid)
-    C1.load_grid = copy.deepcopy(C.load_grid)
-    C1.load_lim = copy.deepcopy(C.load_lim)
-    C1.positions = copy.deepcopy(C.positions)
+                   y=C.B,
+                   z=C.H,
+                   ID=C.ID,
+                   max_wt=C.max_wt,
+                   packed_items=copy.deepcopy(C.packed_items))
 
+    C1.h_grid = np.copy(C.h_grid)
+    C1.load_grid = np.copy(C.load_grid)
+    C1.load_lim = np.copy(C.load_lim)
+    C1.positions = copy.deepcopy(C.positions)
+    
     return C1

@@ -30,12 +30,12 @@ def get_input_from_file(fname) -> tuple[Container, list[Package]]:
 
 def main():
 
-    print("CPU Mode")
+    print("CPU Mode - Numpy")
 
     fname = sys.argv[1]
-    fname = "input/{f}.txt".format(f=fname)
+    inf = "input/{f}.txt".format(f=fname)
 
-    c, packages = get_input_from_file(fname)
+    c, packages = get_input_from_file(inf)
 
     packages.sort(key=cmp_to_key(cmp_pack))
 
@@ -66,7 +66,8 @@ def main():
     outfname = sys.argv[2]
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")
-    outf.write("{r} {ic}\n".format(r=packed_c.vol_opt(), ic=packed_c.item_count()))
+    outf.write("{r} {ic}\n".format(
+        r=packed_c.vol_opt(), ic=packed_c.item_count()))
     outf.close()
 
     timef = open("output/time_{f}.txt".format(f=outfname), "a")

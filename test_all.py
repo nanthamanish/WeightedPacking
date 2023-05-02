@@ -10,7 +10,7 @@ def get_avg(outfname: str):
     f = open("output\\{}.txt".format(outfname), "r")
     vals = f.readlines()
     f.close()
-
+     
     vals = [[float(x) for x in s.split()][0] for s in vals]
     avg = sum(vals)/len(vals)
 

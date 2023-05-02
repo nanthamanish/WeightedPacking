@@ -2,6 +2,7 @@ from package import Package, make_package_copy, allowed_orientations
 from container import Container, make_container_copy
 from functools import cmp_to_key
 import random
+import numpy as np
 
 TREE_WIDTH = 5
 
@@ -12,9 +13,9 @@ def greater_pair(a: tuple[float, Container], b: tuple[float, Container]):
     elif a[0] < b[0]:
         return 1
     else:
-        if a[1].itemCount() < b[1].itemCount():
+        if a[1].item_count() < b[1].item_count():
             return -1
-        elif a[1].itemCount() > b[1].itemCount():
+        elif a[1].item_count() > b[1].item_count():
             return 1
     return 0
 
@@ -41,12 +42,11 @@ class Packer():
             print(s.format(pack.pos.x, pack.pos.y, pack.pos.z))
             print()
 
-    def three_d_pack(self, C: Container, items: list[Package]):
+    def three_d_pack(self, C: Container, items: list[Package]) -> Container:
         options: list[tuple[float, Container]] = []
         options.append((self.greedy_pack(C, items, len(items) - 1), C))
-        
+                
         for i in range(len(items) - 1, -1, -1):
-
             I = items[i]
             Iarr = allowed_orientations(I)
             # random.shuffle(Iarr)
@@ -62,7 +62,7 @@ class Packer():
                     C_new = make_container_copy(options[k][1])
                     Iarr[j].pos = C_new.fit(
                         Iarr[j].l1, Iarr[j].b1, Iarr[j].h1, Iarr[j].stress_load())
-
+                    
                     if Iarr[j].pos.x != -1:
                         C_new = self.pack_item(C_new, Iarr[j])
                         options.append(
@@ -103,12 +103,20 @@ class Packer():
             return
 
         load = I.stress_load()
-        for m in range(I.pos.x, I.pos.x + I.l1, 1):
-            for n in range(I.pos.y, I.pos.y + I.b1, 1):
-                C.h_grid[m][n] += I.h1
-                C.load_grid[m][n] += load
-                C.load_lim[m][n] = min(
-                    C.load_lim[m][n] - load, I.vert_load_lim)
+
+        x_l = I.pos.x
+        x_u = I.pos.x + I.l1
+        y_l = I.pos.y
+        y_u = I.pos.y + I.b1
+
+        C.h_grid[x_l:x_u, y_l:y_u] += I.h1
+
+        C.load_grid[x_l:x_u, y_l:y_u] += load
+
+
+        def fun(t): return min(t - load, I.vert_load_lim)
+        vfun = np.vectorize(fun)
+        C.load_lim[x_l:x_u, y_l:y_u] = vfun(C.load_lim[x_l:x_u, y_l:y_u])
 
         if I.pos.x + I.l1 < C.L:
             C.positions.add((I.pos.x + I.l1, I.pos.y))

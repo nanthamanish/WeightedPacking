@@ -10,4 +10,3 @@ Dataset Source: http://people.brunel.ac.uk/~mastjjb/jeb/orlib/conloadinfo.html
 
 #### Command to Run packer on all input files:
     python test_all.py <wpackX> <output_file>
-
