@@ -8,6 +8,7 @@ import time
 
 PACK_SIZE_LIM = 300
 
+
 def get_input_from_file(fname) -> tuple[Container, list[Package]]:
     f_in = open(fname, "r")
     c_l, c_b, c_h, numPack = read_ints(f_in)
@@ -57,12 +58,14 @@ def main():
 
     print("Maximum Utilization: {mu}".format(mu=tot_vol/c.vol))
 
+    # packing
     start = time.time()
     P = Packer(packages=packages, containers=[c])
     packed_c = P.three_d_pack(C=c, items=packages)
     packed_c.output_rep()
     end = time.time()
 
+    # writing to file
     outfname = sys.argv[2]
     outf = "output/{f}.txt".format(f=outfname)
     outf = open(outf, "a")

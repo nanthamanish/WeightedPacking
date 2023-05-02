@@ -7,10 +7,11 @@ WTPACK_PROBLEM_CNT = 100
 
 
 def get_avg(outfname: str):
+    """ calculates mean, SD """
     f = open("output\\{}.txt".format(outfname), "r")
     vals = f.readlines()
     f.close()
-     
+
     vals = [[float(x) for x in s.split()][0] for s in vals]
     avg = sum(vals)/len(vals)
 

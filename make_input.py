@@ -13,7 +13,7 @@ SEED = 1
 
 def main():
     random.seed(SEED)
-    #inp = input("Enter File Name (without extension): ")
+    # inp = input("Enter File Name (without extension): ")
 
     make_dir(os.getcwd(), "input")
 

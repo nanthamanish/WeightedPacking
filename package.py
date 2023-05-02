@@ -1,7 +1,10 @@
 
 import math
 
+
 class Location:
+    """ location class """
+
     def __init__(self, x=-1, y=-1, z=-1):
         self.x = x
         self.y = y
@@ -19,6 +22,8 @@ class Location:
 
 
 class Package:
+    """ package class """
+
     def __init__(self,
                  ID=0,
                  wt=0,
@@ -46,7 +51,7 @@ class Package:
         self.l1 = l1
         self.b1 = b1
         self.h1 = h1
-        
+
         self.vert_load_lim = stack_load[2]
 
         self.ID = ID
@@ -73,6 +78,7 @@ class Package:
 
 
 def cmp_pack(pa: Package, pb: Package):
+    """ sorts by destination then maximum load possible """
     if pa.dest < pb.dest:
         return -1
     elif pa.dest > pb.dest:
@@ -82,29 +88,33 @@ def cmp_pack(pa: Package, pb: Package):
         m2 = max([pb.orientation[i] * pb.stack_load[i] for i in range(3)])
         if m1 < m2:
             return -1
-        elif m1 > m2: 
+        elif m1 > m2:
             return 1
         else:
             return 0
 
+
 def make_package_copy(I: Package):
+    """ returns a new package obj with same values """
     I1 = Package(ID=I.ID,
-                wt=I.wt,
-                dest=I.dest,
-                l=I.l,
-                b=I.b,
-                h=I.h,
-                l1=I.l1,
-                b1=I.b1,
-                h1=I.h1,
-                packed=I.packed,
-                stack_load=I.stack_load,
-                stackable=I.stackable,
-                pos=I.pos,
-                orientation=I.orientation)
+                 wt=I.wt,
+                 dest=I.dest,
+                 l=I.l,
+                 b=I.b,
+                 h=I.h,
+                 l1=I.l1,
+                 b1=I.b1,
+                 h1=I.h1,
+                 packed=I.packed,
+                 stack_load=I.stack_load,
+                 stackable=I.stackable,
+                 pos=I.pos,
+                 orientation=I.orientation)
     return I1
 
+
 def allowed_orientations(I: Package) -> list[Package]:
+    """ returns a list with allowed orientations of I """
     Iarr: list[Package] = [None for _ in range(6)]
 
     if I.orientation[0] == 1:  # l is vertical

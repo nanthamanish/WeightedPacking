@@ -8,6 +8,7 @@ TREE_WIDTH = 5
 
 
 def greater_pair(a: tuple[float, Container], b: tuple[float, Container]):
+    """ sort by vol_opt() in asc. and item_count() in des. """
     if a[0] > b[0]:
         return -1
     elif a[0] < b[0]:
@@ -21,11 +22,14 @@ def greater_pair(a: tuple[float, Container], b: tuple[float, Container]):
 
 
 class Packer():
+    """ Packer class for Accelerated Tree Search Heuristic """
+
     def __init__(self, packages: list[Package] = [], containers: list[Container] = []) -> None:
         self.packages = packages
         self.containers = containers
 
     def pack(self):
+        """ for multiple containers """
         total_vol_opt = 0
         for cont in self.containers:
             cont = self.three_d_pack(cont, self.packages)
@@ -43,13 +47,13 @@ class Packer():
             print()
 
     def three_d_pack(self, C: Container, items: list[Package]) -> Container:
+        """ packs items in container """
         options: list[tuple[float, Container]] = []
         options.append((self.greedy_pack(C, items, len(items) - 1), C))
-                
+
         for i in range(len(items) - 1, -1, -1):
             I = items[i]
             Iarr = allowed_orientations(I)
-            # random.shuffle(Iarr)
 
             for k in range(len(options) - 1, -1, -1):
                 C_new = make_container_copy(options[k][1])
@@ -58,11 +62,11 @@ class Packer():
                 for j in range(6):
                     if Iarr[j] is None:
                         continue
-                    
+
                     C_new = make_container_copy(options[k][1])
                     Iarr[j].pos = C_new.fit(
                         Iarr[j].l1, Iarr[j].b1, Iarr[j].h1, Iarr[j].stress_load())
-                    
+
                     if Iarr[j].pos.x != -1:
                         C_new = self.pack_item(C_new, Iarr[j])
                         options.append(
@@ -75,12 +79,15 @@ class Packer():
             if len(options) > TREE_WIDTH:
                 options = options[:TREE_WIDTH]
 
+            # printing top TREE_WIDTH vol_opt()
             s = " ".join(format(round(x[0], 3), '.3f') for x in options)
-            print("{it} - {s}".format(it = len(items) - i, s=s))
+            print("{it} - {s}".format(it=len(items) - i, s=s))
 
+        # container state with highest packing
         return options[0][1]
 
     def greedy_pack(self, C: Container, items: list[Package], starting):
+        """ greedily packs items into container """
         C1 = make_container_copy(C)
         for i in range(starting, -1, -1):
             I = items[i]
@@ -99,6 +106,7 @@ class Packer():
         return C1.vol_opt()
 
     def pack_item(self, C: Container, I: Package) -> Container:
+        """ updates container with I """
         if I.pos.x == -1:
             return
 
@@ -112,7 +120,6 @@ class Packer():
         C.h_grid[x_l:x_u, y_l:y_u] += I.h1
 
         C.load_grid[x_l:x_u, y_l:y_u] += load
-
 
         def fun(t): return min(t - load, I.vert_load_lim)
         vfun = np.vectorize(fun)
@@ -129,5 +136,5 @@ class Packer():
 
         I.packed = True
         C.packed_items.append(I)
-        
+
         return C
