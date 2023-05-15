@@ -5,6 +5,7 @@ import json
 import random
 import sys
 
+random.seed(26)
 
 def main():
     fname = sys.argv[1]
@@ -40,16 +41,17 @@ def main():
                         random.random(), alpha]
 
     # Plotting
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8, 7))
     ax = fig.add_subplot(111, projection='3d')
 
     # Axis lim
     ax.axes.set_xlim3d(left=0, right=X)
     ax.axes.set_ylim3d(bottom=0, top=Y)
     ax.axes.set_zlim3d(bottom=0, top=Z)
-    ax.axes.set_xlabel("X", labelpad=20)
-    ax.axes.set_ylabel("Y", labelpad=20)
-    ax.axes.set_zlabel("Z", labelpad=20)
+    ax.axes.set_xlabel("X - Axis", labelpad=20)
+    ax.axes.set_ylabel("Y - Axis", labelpad=20)
+    ax.axes.set_zlabel("Z - Axis", labelpad=20)
+    ax.axes.set_xticks([x for x in range(0, X + 2, 2)])
     # Scaling
     x_scale = X
     y_scale = Y
@@ -63,10 +65,15 @@ def main():
         return np.dot(Axes3D.get_proj(ax), scale)
 
     ax.get_proj = short_proj
+    # ax.view_init(120, 60)
 
     # Final Plot
     ax.voxels(voxels, facecolors=colors)
-    plt.show()
+    ax.set_title("Demo Packing", y=0.65)
+
+    plt.savefig("{}_vis.png".format(fname))
+
+    # plt.show()
 
 
 if __name__ == "__main__":
