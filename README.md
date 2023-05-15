@@ -20,4 +20,6 @@ The file `wtpack/wtpack_demo.txt` is a smaller input file for demonstration and 
 #### Command to Run Visualiser:
     python visualiser.py <json_file_name>
 #### Visualisation:
-![Visualisation](./demo_packed.png)
+<p align="center">
+     <img width="600" src="https://github.com/nanthamanish/WeightedPacking/blob/main/demo_packed.png" alt="Visualisation">
+</p>
