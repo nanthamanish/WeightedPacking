@@ -19,5 +19,5 @@ The file `wtpack/wtpack_demo.txt` is a smaller input file for demonstration and 
     python main.py wtpack_demo <output_file>
 #### Command to Run Visualiser:
     python visualiser.py <json_file_name>
-
-
+#### Visualisation:
+![Visualisation](./demo_pack.png)
