@@ -47,7 +47,9 @@ def main():
     ax.axes.set_xlim3d(left=0, right=X)
     ax.axes.set_ylim3d(bottom=0, top=Y)
     ax.axes.set_zlim3d(bottom=0, top=Z)
-
+    ax.axes.set_xlabel("X", labelpad=20)
+    ax.axes.set_ylabel("Y", labelpad=20)
+    ax.axes.set_zlabel("Z", labelpad=20)
     # Scaling
     x_scale = X
     y_scale = Y
