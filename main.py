@@ -5,6 +5,7 @@ from container import Container
 from packer import Packer
 import sys
 import time
+import json
 
 PACK_SIZE_LIM = 300
 
@@ -77,6 +78,24 @@ def main():
     timef.write("{r}\n".format(r=end-start))
 
     print(end-start)
+
+    # writing packing to json file
+    ljson = {}
+    ljson["Container"] = [c.L, c.B, c.H]
+    item_json = []
+    for I in packed_c.packed_items:
+        i = {}
+        i["position"] = [I.pos.x, I.pos.y, I.pos.z]
+        i["l"] = I.l1
+        i["b"] = I.b1
+        i["h"] = I.h1
+        item_json.append(i)
+    ljson["Items"] = item_json
+    final = json.dumps(ljson, indent=4)
+
+    json_str = json.dumps(ljson, indent=4)
+    with open('output/{f}.json'.format(f=outfname), 'w') as fout:
+        fout.write(json_str)
 
 
 if __name__ == "__main__":
