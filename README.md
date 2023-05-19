@@ -19,7 +19,6 @@ The file `wtpack/wtpack_demo.txt` is a smaller input file for demonstration and 
     python main.py wtpack_demo <output_file>
 #### Command to Run Visualiser:
     python visualiser.py <json_file_name>
-#### Visualisation:
-<p align="center">
-     <img width="600" src="https://github.com/nanthamanish/WeightedPacking/blob/main/demo_packed.png" alt="Visualisation">
-</p>
+
+### Reports
+The report for this project is available at [`Reports/BTP_Presentation.pdf`](https://github.com/nanthamanish/WeightedPacking/blob/main/Reports/BTP_Presentation.pdf "Report") 
